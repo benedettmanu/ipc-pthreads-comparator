@@ -8,7 +8,7 @@ def count_items(esteira, delay, weight, item_count, item_weight, method, lock=No
     while True:
         time.sleep(delay)
         item_count[esteira] += 1
-        if method == "ipc":
+        if method == "2": # IPC with Pipe
             item_weight[esteira] += weight.value
             current_time = time.time()  # comment to test without pipe
             if current_time - last_sent_time >= 2 and sum(item_count) % 26 == 0:
@@ -38,9 +38,10 @@ def display(pipe, item_count, lock=None):
 
 
 def main():
-    method = input("Você quer usar Pthreads ou IPC? ")
+    print("Você quer utilizar Pthreads com Mutex, ou IPC com Pipe.")
+    method = input("Digite 1 para Pthreads com Mutex e 2 para IPC com Pipe: ")
 
-    if method.lower() == "pthreads":
+    if method.lower() == "1":
         lock = threading.Lock()
 
         item_count = [0, 0, 0]
@@ -66,7 +67,7 @@ def main():
         t3.join()
         t_display.join()
 
-    elif method.lower() == "ipc":
+    elif method.lower() == "2":
         parent_conn, child_conn = Pipe()
 
         item_count = Array('i', [0, 0, 0])
@@ -95,7 +96,7 @@ def main():
         p_display.join()
 
     else:
-        print("Método desconhecido.")
+        print("Opção desconhecida.")
 
 
 if __name__ == '__main__':
